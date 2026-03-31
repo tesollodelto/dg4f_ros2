@@ -13,13 +13,13 @@ cd ~/your_ws
 
 ### Update rosdep
 ```bash
-apt update
+sudo apt update
 rosdep update
 ```
 
 ### Install Specific Dependencies
 ```bash
-rosdep install --from-paths src/DELTO_M_ROS2/dg4f_driver --ignore-src -r -y
+rosdep install --from-paths src/tesollo_ros2/dg4f_ros2/dg4f_driver --ignore-src -r -y
 ```
 
 ### Verify Installation by Building
@@ -33,7 +33,7 @@ colcon build --packages-select dg4f_driver delto_hardware
 
 | Launch File | Description | Controller Type |
 |-------------|-------------|-----------------|
-| `dg4f_ros2_controller.launch.py` | DG4F - JointTrajectoryController | Position (Trajectory) |
+| `dg4f_driver.launch.py` | DG4F - JointTrajectoryController | Position (Trajectory) |
 | `dg4f_effort_controller.launch.py` | DG4F - Direct Effort Control | Effort (Direct) |
 
 ---
@@ -44,7 +44,7 @@ colcon build --packages-select dg4f_driver delto_hardware
 
 Launch the Delto Gripper-4F controller with:
 ```bash
-ros2 launch dg4f_driver dg4f_ros2_controller.launch.py delto_ip:=169.254.186.72 delto_port:=502
+ros2 launch dg4f_driver dg4f_driver.launch.py delto_ip:=169.254.186.72 delto_port:=502
 ```
 
 ### 2. Loading DG4F Effort controller
