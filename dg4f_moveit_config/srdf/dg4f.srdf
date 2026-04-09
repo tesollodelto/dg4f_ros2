@@ -29,14 +29,20 @@
     <disable_collisions link1="base_link" link2="l_dg_mount" reason="Adjacent" />
     <disable_collisions link1="l_dg_mount" link2="l_dg_base" reason="Adjacent" />
     <disable_collisions link1="l_dg_mount" link2="l_dg_logo" reason="Adjacent" />
+    <disable_collisions link1="l_dg_base" link2="l_dg_logo" reason="Adjacent" />
     <disable_collisions link1="base_link" link2="l_dg_base" reason="Never" />
 
     <!-- Finger 1 -->
     <disable_collisions link1="l_dg_base" link2="l_dg_1_inner" reason="Adjacent" />
     <disable_collisions link1="l_dg_1_inner" link2="l_dg_1_outer" reason="Adjacent" />
+    
     <disable_collisions link1="l_dg_base" link2="l_dg_1_1" reason="Adjacent" />
     <disable_collisions link1="l_dg_1_1" link2="l_dg_1_2" reason="Adjacent" />
+    <disable_collisions link1="l_dg_1_1" link2="l_dg_1_outer" reason="Adjacent" />
+    <disable_collisions link1="l_dg_1_1" link2="l_dg_1_inner" reason="Adjacent" />
+    <disable_collisions link1="l_dg_1_1" link2="l_dg_2_1" reason="Adjacent" />
     <disable_collisions link1="l_dg_1_2" link2="l_dg_1_3" reason="Adjacent" />
+    <disable_collisions link1="l_dg_1_2" link2="l_dg_2_1" reason="Adjacent" />
     <disable_collisions link1="l_dg_1_3" link2="l_dg_1_4" reason="Adjacent" />
     <disable_collisions link1="l_dg_1_4" link2="l_dg_1_5" reason="Adjacent" />
     <disable_collisions link1="l_dg_1_5" link2="l_dg_1_tip" reason="Adjacent" />
@@ -47,6 +53,7 @@
     <disable_collisions link1="l_dg_2_2" link2="l_dg_2_3" reason="Adjacent" />
     <disable_collisions link1="l_dg_2_3" link2="l_dg_2_4" reason="Adjacent" />
     <disable_collisions link1="l_dg_2_4" link2="l_dg_2_5" reason="Adjacent" />
+    <disable_collisions link1="l_dg_2_4" link2="l_dg_2_tip" reason="Adjacent" />
     <disable_collisions link1="l_dg_2_5" link2="l_dg_2_tip" reason="Adjacent" />
 
     <!-- Finger 3 -->
@@ -56,12 +63,16 @@
     <disable_collisions link1="l_dg_3_3" link2="l_dg_3_4" reason="Adjacent" />
     <disable_collisions link1="l_dg_3_4" link2="l_dg_3_5" reason="Adjacent" />
     <disable_collisions link1="l_dg_3_5" link2="l_dg_3_tip" reason="Adjacent" />
+    <disable_collisions link1="l_dg_3_4" link2="l_dg_3_tip" reason="Adjacent" />
 
     <!-- Finger 4 -->
     <disable_collisions link1="l_dg_base" link2="l_dg_4_inner" reason="Adjacent" />
     <disable_collisions link1="l_dg_4_inner" link2="l_dg_4_outer" reason="Adjacent" />
     <disable_collisions link1="l_dg_base" link2="l_dg_4_1" reason="Adjacent" />
     <disable_collisions link1="l_dg_4_1" link2="l_dg_4_2" reason="Adjacent" />
+    <disable_collisions link1="l_dg_4_1" link2="l_dg_4_outer" reason="Adjacent" />
+    <disable_collisions link1="l_dg_4_1" link2="l_dg_4_inner" reason="Adjacent" />
+    
     <disable_collisions link1="l_dg_4_2" link2="l_dg_4_3" reason="Adjacent" />
     <disable_collisions link1="l_dg_4_3" link2="l_dg_4_4" reason="Adjacent" />
     <disable_collisions link1="l_dg_4_4" link2="l_dg_4_5" reason="Adjacent" />
