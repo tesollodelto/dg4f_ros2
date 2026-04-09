@@ -13,6 +13,7 @@ ROS 2 packages for the **Delto Gripper DG4F** (4-finger).
 | `dg4f_description` | URDF/xacro model, meshes, and RViz display launch |
 | `dg4f_driver` | ros2_control hardware driver and controller launch files |
 | `dg4f_gz` | Gazebo simulation |
+| `dg4f_moveit_config` | MoveIt 2 configuration (SRDF, planners, mock hardware) |
 
 ## Dependencies
 
@@ -31,7 +32,7 @@ git clone https://github.com/tesollodelto/dg_tcp_comm.git
 
 ```bash
 cd ~/ros2_ws
-colcon build --packages-select dg4f_description dg4f_driver dg4f_gz
+colcon build --packages-select dg4f_description dg4f_driver dg4f_gz dg4f_moveit_config
 source install/setup.bash
 ```
 
@@ -49,4 +50,13 @@ ros2 launch dg4f_driver dg4f_effort_controller.launch.py
 
 # Gazebo simulation
 ros2 launch dg4f_gz dg4f_gz.launch.py
+
+# Mock hardware (no device required)
+ros2 launch dg4f_driver dg4f_mock.launch.py
+
+# MoveIt (mock hardware, default)
+ros2 launch dg4f_moveit_config dg4f_moveit.launch.py
+
+# MoveIt (real hardware)
+ros2 launch dg4f_moveit_config dg4f_moveit.launch.py use_mock:=false delto_ip:=169.254.186.72
 ```
