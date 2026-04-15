@@ -126,7 +126,7 @@ def generate_launch_description():
 
     real_controllers = PathJoinSubstitution(
         [FindPackageShare("dg4f_driver"), "config",
-         "dg4f_effort_controller.yaml"]
+         "dg4f_controller.yaml"]
     )
 
     control_node_mock = Node(
