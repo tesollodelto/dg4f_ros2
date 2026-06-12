@@ -4,8 +4,8 @@
   <name>dg4f_driver</name>
   <version>0.0.1</version>
   <description>Tesollo DG-4F ROS2 package</description>
-  <maintainer email="khc@tesollo.com">hong</maintainer>
-  <license>BSD3-clause</license>
+  <maintainer email="khc@tesollo.com">hongcheol</maintainer>
+  <license>BSD-3-Clause</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
