@@ -2,7 +2,7 @@
   ros__parameters:
     update_rate: 300
 
-    # 조인트별 PI 위치-제어기(출력: effort)
+    # One PI position controller per joint (output: effort)
     j_dg_1_1_pospid: { type: pid_controller/PidController }
     j_dg_1_2_pospid: { type: pid_controller/PidController }
     j_dg_1_3_pospid: { type: pid_controller/PidController }
@@ -22,11 +22,11 @@
     j_dg_1_inner_pospid: { type: pid_controller/PidController }
     j_dg_4_inner_pospid: { type: pid_controller/PidController }
 
-    # 상태 브로드캐스터(옵션이지만 보통 함께 사용)
+    # State broadcaster (optional, usually loaded together)
     joint_state_broadcaster:
       type: joint_state_broadcaster/JointStateBroadcaster
 
-# ------------- 각 조인트별 PI 게인 -------------
+# ------------- per-joint PI gains -------------
 /**/j_dg_1_1_pospid:
   ros__parameters:
     dof_names: ["j_dg_1_1"]
@@ -41,7 +41,7 @@
     command_interface: effort
     reference_and_state_interfaces: ["position"]
     gains:
-      j_dg_1_2: { p: 1.5, i: .0, d: 0.0, i_clamp_max: 0.0, i_clamp_min: 0.0 }
+      j_dg_1_2: { p: 1.5, i: 0.0, d: 0.0, i_clamp_max: 0.0, i_clamp_min: 0.0 }
 
 /**/j_dg_1_3_pospid:
   ros__parameters:
@@ -171,7 +171,7 @@
     gains:
       j_dg_4_inner: { p: 1.5, i: 0.0, d: 0.0, i_clamp_max: 0.0, i_clamp_min: 0.0 }
 
-# Joint State Broadcaster (선택)
+# Joint State Broadcaster
 /**/joint_state_broadcaster:
   ros__parameters:
     update_rate: 300

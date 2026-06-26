@@ -34,6 +34,8 @@ colcon build --packages-select dg4f_driver delto_hardware
 | Launch File | Description | Controller Type |
 |-------------|-------------|-----------------|
 | `dg4f_driver.launch.py` | DG4F - JointTrajectoryController | Position (Trajectory) |
+| `dg4f_pid_controller.launch.py` | DG4F - Individual per-joint PID Controllers | PID (Position→Effort) |
+| `dg4f_pid_all_controller.launch.py` | DG4F - Single grouped PID Controller (all joints) | PID (Position→Effort) |
 | `dg4f_effort_controller.launch.py` | DG4F - Direct Effort Control | Effort (Direct) |
 
 ---
@@ -47,22 +49,38 @@ Launch the Delto Gripper-4F controller with:
 ros2 launch dg4f_driver dg4f_driver.launch.py delto_ip:=169.254.186.72 delto_port:=502
 ```
 
-### 2. Loading DG4F Effort controller
+### 2. Loading DG4F PID controllers
+
+Two PID variants are available (both: position reference → effort output):
+
+```bash
+# Individual: one PidController per joint (topic: /dg4f/<joint>_pospid/reference)
+ros2 launch dg4f_driver dg4f_pid_controller.launch.py delto_ip:=169.254.186.72
+
+# All-in-one: a single grouped PidController for every joint (topic: /dg4f/j_dg_pospid/reference)
+ros2 launch dg4f_driver dg4f_pid_all_controller.launch.py delto_ip:=169.254.186.72
+```
+
+### 3. Loading DG4F Effort controller
 
 For direct effort control:
 ```bash
 ros2 launch dg4f_driver dg4f_effort_controller.launch.py delto_ip:=169.254.186.72
 ```
 
-### 3. Test scripts:
+### 4. Test scripts:
 
 | Script | Controller Type | Description |
 |--------|-----------------|-------------|
-| `dg4f_pid_test.py` | PID | Individual joint PID test |
-| `dg4f_pid_all_test.py` | PID All | All joints PID test |
+| `dg4f_pid_test.py` | PID (individual) | Publishes a reference to each per-joint `*_pospid` controller |
+| `dg4f_pid_all_test.py` | PID (all) | Publishes one reference to the grouped `j_dg_pospid` controller |
 
 ```bash
+# Individual per-joint PID
 ros2 run dg4f_driver dg4f_pid_test.py
+
+# Single grouped PID (all joints)
+ros2 run dg4f_driver dg4f_pid_all_test.py
 ```
 
 ---
@@ -76,9 +94,16 @@ ros2 run dg4f_driver dg4f_pid_test.py
   - Inner: j_dg_1_inner, j_dg_4_inner
 - **Topic**: `/dg4f/delto_controller/joint_trajectory`
 
-### 2. PID Controller (Available)
-- **Config**: `dg4f_pid_controller.yaml`
-- **Purpose**: Individual joint PID effort control
+### 2. PID Controllers (Position → Effort)
+
+Naming convention (consistent across all Delto drivers):
+
+| Variant | Config | Controllers | Reference Topic |
+|---------|--------|-------------|-----------------|
+| **Individual** (`pid`) | `dg4f_pid_controller.yaml` | one `pid_controller/PidController` per joint, named `<joint>_pospid` | `/dg4f/<joint>_pospid/reference` |
+| **All-in-one** (`pid_all`) | `dg4f_pid_all_controller.yaml` | a single `pid_controller/PidController` named `j_dg_pospid` managing all joints | `/dg4f/j_dg_pospid/reference` |
+
+Both take a `control_msgs/MultiDOFCommand` position reference and output effort. Gains are seeded from the JTC config (`p: 1.5`).
 
 ### 3. Effort Controller (Direct)
 - **Purpose**: Direct effort control without position feedback
