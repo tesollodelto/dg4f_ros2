@@ -12,21 +12,18 @@
 
 using namespace std::chrono_literals;
 
-std::vector<std::string> joint_names_left = {
-    "lj_dg_1_1", "lj_dg_1_2", "lj_dg_1_3", "lj_dg_1_4", "lj_dg_2_1",
-    "lj_dg_2_2", "lj_dg_2_3", "lj_dg_2_4", "lj_dg_3_1", "lj_dg_3_2",
-    "lj_dg_3_3", "lj_dg_3_4", "lj_dg_4_1", "lj_dg_4_2", "lj_dg_4_3",
-    "lj_dg_4_4", "lj_dg_5_1", "lj_dg_5_2", "lj_dg_5_3", "lj_dg_5_4"};
-
-std::vector<std::string> joint_names_right = {
-    "rj_dg_1_1", "rj_dg_1_2", "rj_dg_1_3", "rj_dg_1_4", "rj_dg_2_1",
-    "rj_dg_2_2", "rj_dg_2_3", "rj_dg_2_4", "rj_dg_3_1", "rj_dg_3_2",
-    "rj_dg_3_3", "rj_dg_3_4", "rj_dg_4_1", "rj_dg_4_2", "rj_dg_4_3",
-    "rj_dg_4_4", "rj_dg_5_1", "rj_dg_5_2", "rj_dg_5_3", "rj_dg_5_4"};
+// One name per motor, in motor order, matching dg4f_ros2_control.xacro.
+// This file previously carried the DG-5F left/right 20-joint lists; the DG-4F
+// has 18 actuators and no handedness.
+std::vector<std::string> joint_names = {
+    "j_dg_1_1", "j_dg_1_2", "j_dg_1_3", "j_dg_1_4", "j_dg_2_1", "j_dg_2_2",
+    "j_dg_2_3", "j_dg_2_4", "j_dg_3_1", "j_dg_3_2", "j_dg_3_3", "j_dg_3_4",
+    "j_dg_4_1", "j_dg_4_2", "j_dg_4_3", "j_dg_4_4", "j_dg_1_inner",
+    "j_dg_4_inner"};
 
 class dg4fDriver : public rclcpp::Node {
  public:
-  dg4fDriver() : Node("dg5FDriver") {
+  dg4fDriver() : Node("dg4f_operator_driver") {
     this->declare_parameter<std::string>("ip", "169.254.186.72");
     this->declare_parameter<int>("port", 502);
     this->declare_parameter<std::string>("hand_type", "right");
@@ -46,14 +43,10 @@ class dg4fDriver : public rclcpp::Node {
     timer_ = this->create_wall_timer(
         50ms, std::bind(&dg4fDriver::timer_callback, this));
 
-    try {
-      delto_client_ = std::make_unique<DG4F_TCP>(ip_, port_);
-      delto_client_->connect();
-    } catch (const boost::system::system_error& e) {
-      if (e.code() != boost::asio::error::operation_aborted &&
-          e.code() != boost::asio::error::interrupted) {
-        throw;
-      }
+    delto_client_ = std::make_unique<DG4F_TCP>(ip_, port_);
+    if (!delto_client_->connect()) {
+      RCLCPP_ERROR(this->get_logger(),
+                   "Failed to connect to %s:%d", ip_.c_str(), port_);
     }
   }
 
@@ -77,26 +70,35 @@ class dg4fDriver : public rclcpp::Node {
       std::cout << value << " ";
     }
 
-    delto_client_->start_control();
+    // NOTE: msg->data is printed but never applied -- this driver has no
+    // set_position_rad() call, so commanded targets are discarded.
+    try {
+      delto_client_->start_control();
+    } catch (const std::exception& e) {
+      RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+                           "Modbus write failed: %s", e.what());
+    }
     std::cout << std::endl;
   }
 
   void timer_callback() {
-    data = delto_client_->get_data();
+    // A Modbus timeout or exception response throws. Left uncaught it
+    // propagates out of the executor and terminates the process, so one
+    // dropped frame used to kill the node.
+    try {
+      data = delto_client_->get_data();
+    } catch (const std::exception& e) {
+      RCLCPP_WARN_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
+                           "Modbus read failed: %s", e.what());
+      return;
+    }
     // this->get_logger().info("Received data fr som DG4F");S?
     RCLCPP_INFO(this->get_logger(), "Received data from DG4F");
     // Publish joint states
     auto joint_state = sensor_msgs::msg::JointState();
     joint_state.header.stamp = this->get_clock()->now();
 
-    if (hand_type_ == "left") {
-      joint_state.name = joint_names_left;
-    } else if (hand_type_ == "right") {
-      joint_state.name = joint_names_right;
-    } else {
-      RCLCPP_ERROR(this->get_logger(), "Invalid hand type: %s", hand_type_.c_str());
-      return;
-    }
+    joint_state.name = joint_names;
     joint_state.position = data.position;
     joint_state.velocity = data.velocity;
     joint_state.effort = data.current;
@@ -121,10 +123,16 @@ int main(int argc, char* argv[]) {
   rclcpp::executors::MultiThreadedExecutor executor(rclcpp::ExecutorOptions(),
                                                     2);
 
-  auto node = std::make_shared<dg4fDriver>();
-
-  executor.add_node(node);
-  executor.spin();
+  try {
+    auto node = std::make_shared<dg4fDriver>();
+    executor.add_node(node);
+    executor.spin();
+  } catch (const std::exception& e) {
+    RCLCPP_ERROR(rclcpp::get_logger("dg4fDriver"),
+                 "Fatal error: %s", e.what());
+    rclcpp::shutdown();
+    return 1;
+  }
 
   rclcpp::shutdown();
   return 0;
