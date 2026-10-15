@@ -1,11 +1,14 @@
-# DG4F ROS 2
+# TESOLLO DG-4F ROS 2
 
-[![CI](https://github.com/tesollodelto/dg4f_ros2/actions/workflows/ci.yml/badge.svg)](https://github.com/tesollodelto/dg4f_ros2/actions/workflows/ci.yml)
-![ROS 2 Humble](https://img.shields.io/badge/ROS_2-Humble-blue?logo=ros)
-![ROS 2 Jazzy](https://img.shields.io/badge/ROS_2-Jazzy-blue?logo=ros)
-![ROS 2 Lyrical](https://img.shields.io/badge/ROS_2-Lyrical-orange?logo=ros)
+Official ROS 2 packages for the **TESOLLO DG-4F**, an 18-DoF, multi-joint 4-finger robotic gripper designed for versatile grasping and object manipulation.
 
-ROS 2 packages for the **Delto Gripper DG4F** (4-finger).
+This repository provides ROS 2 resources for simulation and real-hardware integration, including **URDF/Xacro robot descriptions, ros2_control hardware interfaces, Gazebo simulation, RViz visualization, and MoveIt 2 configurations**.
+
+### Resources
+
+- [DG-4F Product Page](https://www.tesollo.com/products/grippers/dg-4f)
+- [TESOLLO ROS 2 Documentation](https://tesollodelto.github.io/tesollo_ros2/)
+- [TESOLLO ROS 2 Repository](https://github.com/tesollodelto/tesollo_ros2)
 
 ## Packages
 
